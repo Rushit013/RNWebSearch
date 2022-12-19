@@ -1,74 +1,96 @@
 import React from 'react';
-import { SafeAreaView, TextInput, View, Text, TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import styles from './styles';
 
-import AutoHeightWebView from 'react-native-autoheight-webview';
+import {WebView} from 'react-native-webview';
 
 export default class App extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            searchText: ''
-        }
-    }
+    this.state = {
+      searchText: '',
+    };
+  }
 
-    onSearchText = (text) => {
-        this.setState({ searchText: text }, () => {
-            if (text) {
-                const run = `searchKeyword("${text}")`;
-                this.webviewRef.injectJavaScript(run)
-            } else {
-                const run = `unmark()`;
-                this.webviewRef.injectJavaScript(run)
-            }
-        })
-    }
+  onSearchText = text => {
+    this.setState({searchText: text}, () => {
+      if (text) {
+        const run = `searchKeyword("${text}")`;
+        this.webviewRef.injectJavaScript(run);
+      } else {
+        const run = `unmark()`;
+        this.webviewRef.injectJavaScript(run);
+      }
+    });
+  };
 
-    onNextPress = () => {
-        const run = `focusNext()`;
-        this.webviewRef.injectJavaScript(run)
-    }
+  onNextPress = () => {
+    const run = `focusNext()`;
+    this.webviewRef.injectJavaScript(run);
+  };
 
-    render() {
-        const { searchText } = this.state;
-        return (
-            <SafeAreaView style={styles.safeAreaContainer}>
-                <View style={styles.rootView}>
-                    <View style={styles.searchHeader}>
-                        <View style={styles.searchInputContainer}>
-                            <TextInput
-                                placeholder='Enter value'
-                                value={searchText}
-                                style={{ flex: 1, width: '100%' }}
-                                onChangeText={this.onSearchText}
-                            />
-                        </View>
-                        <View style={styles.headerActionContainer}>
-                            <TouchableOpacity style={styles.nextButtonContainer} activeOpacity={0.7} onPress={() => this.onNextPress()}>
-                                <Text style={styles.nextButtonText}>next</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <AutoHeightWebView
-                        ref={(ref) => this.webviewRef = ref}
-                        decelerationRate={'fast'}
-                        originWhitelist={['*']}
-                        customStyle={`
-                                * {
-                                    font-family: 'Times New Roman';
-                                }
-                                p {
-                                    font-size: 16px;
-                                }
-                                `}
-                        onSizeUpdated={size => console.log(size.height)}
-                        source={{
-                            html: `
+  onPreviousPress = () => {
+    const run = `focusPrevious()`;
+    this.webviewRef.injectJavaScript(run);
+  };
+
+  render() {
+    const {searchText} = this.state;
+    return (
+      <SafeAreaView style={styles.safeAreaContainer}>
+        <View style={styles.rootView}>
+          <View style={styles.searchHeader}>
+            <View style={styles.searchInputContainer}>
+              <TextInput
+                placeholder="Enter value"
+                value={searchText}
+                style={{flex: 1, width: '100%'}}
+                onChangeText={this.onSearchText}
+              />
+            </View>
+            <View style={styles.headerActionContainer}>
+              <TouchableOpacity
+                style={styles.nextButtonContainer}
+                activeOpacity={0.7}
+                onPress={() => this.onNextPress()}>
+                <Text style={styles.nextButtonText}>next</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.headerActionContainer}>
+              <TouchableOpacity
+                style={styles.nextButtonContainer}
+                activeOpacity={0.7}
+                onPress={() => this.onPreviousPress()}>
+                <Text style={styles.nextButtonText}>previous</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <WebView
+            ref={ref => (this.webviewRef = ref)}
+            decelerationRate={'fast'}
+            originWhitelist={['*']}
+            customStyle={`* {
+                                font-family: 'Times New Roman';
+                            }
+                            p {
+                                font-size: 16px;
+                            }
+                            `}
+            onSizeUpdated={size => console.log(size.height)}
+            source={{
+              html: `
                         <!DOCTYPE html>
                         <html>
 
                         <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <style>
                                 mark {
                                     background: yellow;
@@ -190,18 +212,35 @@ export default class App extends React.Component {
                                 }
                             }
 
+                            function focusPrevious() {
+                                if ($results.length) {
+                                    console.log("length =", $results.length)
+                                    currentIndex -= 1;
+                                    if (currentIndex < 0) {
+                                        currentIndex = $results.length - 1;
+                                    }
+                                    if (currentIndex > $results.length - 1) {
+                                        currentIndex = 0;
+                                    }
+                                    jumpTo();
+                                }
+                            }
+
                             function unmark() {
                                 var instance = new Mark('#content');
                                 instance.unmark()
                             }
                         </script>
-                        ` }}
-                        scalesPageToFit={true}
-                        viewportContent={'width=device-width, user-scalable=no, initial-scale=1'}
-                        startInLoadingState={true}
-                    />
-                </View>
-            </SafeAreaView>
-        )
-    }
+                        `,
+            }}
+            scalesPageToFit={true}
+            viewportContent={
+              'width=device-width, user-scalable=no, initial-scale=1'
+            }
+            startInLoadingState={true}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 }
