@@ -4,12 +4,13 @@ const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
     width: '100%',
+    backgroundColor: '#f5f8eb',
   },
   rootView: {
     flex: 1,
     width: '100%',
     padding: 12,
-    backgroundColor: 'white',
+    backgroundColor: '#f5f8eb',
   },
   searchHeader: {
     height: 60,
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButtonContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#10442C',
     height: 40,
     width: 70,
     alignItems: 'center',
