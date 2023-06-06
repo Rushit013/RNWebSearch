@@ -15,6 +15,10 @@ You can start by cloning this repository
 
 (Using yarn: `yarn ios` or `yarn android`)
 
+## Output
+
+https://github.com/Rushit013/RNWebSearch/assets/60570262/72d24f0f-c277-43eb-a774-f2be780eca71
+
 ---
 
 ## Give a Star ⭐
